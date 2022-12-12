@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -23,7 +24,7 @@ public class Day12 {
         }
     }
 
-    private int[][] map;
+    private Node[][] map;
 
     public void run(String... args) {
 
@@ -32,7 +33,7 @@ public class Day12 {
         rows.set((int)dataStreamSupplier(test).peek(str -> {
             cols.set((int)str.chars().count());
         }).count());
-        map = new int[cols.get()][rows.get()];
+        map = new Node[rows.get()][cols.get()];
 
         Coordinate start;
         Coordinate end;
@@ -50,7 +51,9 @@ public class Day12 {
                         end = new Coordinate(x,y);
                         c = 'z';
                     }
-                    map[x][y] = ((int)c)-96;
+                    //System.out.print(Character.getNumericValue(c)-10 + " ");
+
+                    map[y][x] = new Node(x, y , Character.getNumericValue(c)-10, map);
                     x++;
                 }
                 y++;
@@ -59,7 +62,29 @@ public class Day12 {
             // Handle the IOException
         }
 
-        Arrays.stream(map).peek(System.out::println).forEach(str -> Arrays.stream(str).mapToObj(i -> String.valueOf(i)).forEach(System.out::print));
+        Arrays.stream(map).peek(t -> System.out.println()).forEach(arr -> Arrays.stream(arr).forEach(v -> {
+            if (v.getUp().isPresent()) {
+                System.out.print("^ ");
+            } else {
+                System.out.print("X ");
+            }
+            if (v.getDown().isPresent()) {
+                System.out.print("v ");
+            } else {
+                System.out.print("X ");
+            }
+            if (v.getLeft().isPresent()) {
+                System.out.print("< ");
+            } else {
+                System.out.print("X ");
+            }
+            if (v.getRight().isPresent()) {
+                System.out.print("> ");
+            } else {
+                System.out.print("X ");
+            }
+
+        }));
 
     }
 
